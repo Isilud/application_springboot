@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class Firestation {
     String address;
-    Integer station;
+    String station;
 }

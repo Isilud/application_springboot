@@ -1,6 +1,6 @@
 package com.safetynet.model;
 
-import java.util.List;
+import java.util.Set;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +11,6 @@ public class MedicalRecord {
     String firstName;
     String lastName;
     String birthDate;
-    List<String> medication;
-    List<String> allergies;
+    Set<String> medication;
+    Set<String> allergies;
 }

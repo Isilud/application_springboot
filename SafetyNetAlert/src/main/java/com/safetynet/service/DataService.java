@@ -1,5 +1,7 @@
 package com.safetynet.service;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -8,7 +10,7 @@ import jakarta.annotation.PostConstruct;
 public interface DataService {
 
     @PostConstruct
-    public void setUp();
+    public void setUp() throws IOException;
 
     public String toString();
 
