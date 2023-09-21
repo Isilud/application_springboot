@@ -1,13 +1,13 @@
-package com.safetynet.service;
+package com.safetynet.repository;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.safetynet.model.MedicalRecord;
 
-@Service
+@Repository
 public class MedicalRecordRepository {
 
     private static Set<MedicalRecord> MedicalRecords = new HashSet<MedicalRecord>();

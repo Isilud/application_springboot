@@ -3,41 +3,39 @@ package com.safetynet.service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.controller.PersonController;
 import com.safetynet.model.Firestation;
 import com.safetynet.model.MedicalRecord;
 import com.safetynet.model.Person;
+import com.safetynet.repository.FirestationRepository;
+import com.safetynet.repository.MedicalRecordRepository;
+import com.safetynet.repository.PersonRepository;
 
 import jakarta.annotation.PostConstruct;
 
-@Service("JsonDataService")
+@Service
 public class JsonDataService implements DataService {
 
-    @Autowired
-    PersonRepository personRepository;
-    @Autowired
-    FirestationRepository firestationRepository;
-    @Autowired
-    MedicalRecordRepository medicalRecordRepository;
+    private final PersonRepository personRepository;
+
+    private final FirestationRepository firestationRepository;
+
+    private final MedicalRecordRepository medicalRecordRepository;
+
+    public JsonDataService(PersonRepository personRepository, FirestationRepository firestationRepository,
+            MedicalRecordRepository medicalRecordRepository) {
+        this.personRepository = personRepository;
+        this.firestationRepository = firestationRepository;
+        this.medicalRecordRepository = medicalRecordRepository;
+    }
 
     @PostConstruct
     public void setUp() throws IOException {
@@ -94,4 +92,5 @@ public class JsonDataService implements DataService {
         System.out.println(firestationRepository.getAll());
         System.out.println(medicalRecordRepository.getAll());
     }
+
 }

@@ -1,13 +1,13 @@
-package com.safetynet.service;
+package com.safetynet.repository;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.safetynet.model.Firestation;
 
-@Service
+@Repository
 public class FirestationRepository {
 
     private static Set<Firestation> Firestations = new HashSet<Firestation>();
