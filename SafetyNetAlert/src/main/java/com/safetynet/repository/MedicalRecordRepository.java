@@ -18,8 +18,8 @@ public class MedicalRecordRepository {
         return medicalRecords;
     }
 
-    public void save(MedicalRecord medicalRecord) {
-        MedicalRecordRepository.medicalRecords.add(medicalRecord);
+    public boolean save(MedicalRecord medicalRecord) {
+        return MedicalRecordRepository.medicalRecords.add(medicalRecord);
     }
 
     public Optional<MedicalRecord> findByPatientName(String firstName, String lastName) {
@@ -29,7 +29,7 @@ public class MedicalRecordRepository {
                 .findFirst();
     }
 
-    public void remove(MedicalRecord medicalRecord) {
-        MedicalRecordRepository.medicalRecords.remove(medicalRecord);
+    public boolean remove(MedicalRecord medicalRecord) {
+        return MedicalRecordRepository.medicalRecords.remove(medicalRecord);
     }
 }

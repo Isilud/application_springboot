@@ -18,8 +18,8 @@ public class FirestationRepository {
         return firestations;
     }
 
-    public void save(Firestation firestation) {
-        this.firestations.add(firestation);
+    public boolean save(Firestation firestation) {
+        return this.firestations.add(firestation);
     }
 
     public Optional<Firestation> findByAddress(String address) {
@@ -28,7 +28,7 @@ public class FirestationRepository {
                 .findFirst();
     }
 
-    public void remove(Firestation firestation) {
-        this.firestations.remove(firestation);
+    public boolean remove(Firestation firestation) {
+        return this.firestations.remove(firestation);
     }
 }

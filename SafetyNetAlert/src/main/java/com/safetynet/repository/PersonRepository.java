@@ -17,8 +17,8 @@ public class PersonRepository {
         return persons;
     }
 
-    public void save(Person person) {
-        persons.add(person);
+    public boolean save(Person person) {
+        return persons.add(person);
     }
 
     public Optional<Person> findByName(String firstName, String lastName) {
@@ -27,7 +27,7 @@ public class PersonRepository {
                 .findFirst();
     }
 
-    public void remove(Person person) {
-        persons.remove(person);
+    public boolean remove(Person person) {
+        return persons.remove(person);
     }
 }
