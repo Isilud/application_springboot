@@ -1,6 +1,8 @@
 package com.safetynet.repository;
 
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Repository;
@@ -17,6 +19,12 @@ public class PersonRepository {
 
     public void save(Person person) {
         persons.add(person);
+    }
+
+    public Optional<Person> findByName(String firstName, String lastName) {
+        return persons.stream().filter(p -> Objects.nonNull(firstName) && Objects.nonNull(lastName)
+                && Objects.equals(p.getFirstName(), firstName) && Objects.equals(p.getLastName(), lastName))
+                .findFirst();
     }
 
     public void remove(Person person) {
