@@ -1,5 +1,6 @@
 package com.safetynet.controller;
 
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,20 @@ public class FirestationController {
     }
 
     @DeleteMapping("/firestation")
-    public ResponseEntity<Firestation> deleteFirestation(@RequestBody String address) {
+    public ResponseEntity<Void> deleteFirestation(@RequestBody Firestation firestation) {
         try {
-            firestationService.removeFirestation(address);
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            if (Objects.nonNull(firestation.getAddress())) {
+                boolean isRemoved = firestationService.removeFirestationWithAddress(firestation.getAddress());
+                if (isRemoved)
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                boolean isRemoved = firestationService.removeFirestationWithStation(firestation.getStation());
+                if (isRemoved)
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

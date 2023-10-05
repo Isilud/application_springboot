@@ -30,22 +30,30 @@ public class FirestationService {
         Optional<Firestation> firestationToUpdate = firestationRepository.findByAddress(firestation.getAddress());
         if (firestationToUpdate.isPresent()) {
             Firestation _firestationToUpdate = firestationToUpdate.get();
-            _firestationToUpdate.setStation(firestation.getStation());
-            return _firestationToUpdate;
+            firestationRepository.remove(_firestationToUpdate);
+            firestationRepository.save(firestation);
+            return firestation;
         }
         throw new ObjectNotFoundException(
                 "No firestation with address: " + firestation.getAddress() + " found.",
                 firestationToUpdate);
     }
 
-    public void removeFirestation(String address) {
+    public boolean removeFirestationWithAddress(String address) {
         Optional<Firestation> firestationToRemove = firestationRepository.findByAddress(address);
         if (firestationToRemove.isPresent()) {
-            firestationRepository.remove(firestationToRemove.get());
+            return firestationRepository.remove(firestationToRemove.get());
+        } else
+            return false;
+    }
+
+    public boolean removeFirestationWithStation(String station) {
+        Set<Firestation> firestationToRemove = firestationRepository.findAllByStation(station);
+        if (firestationToRemove.size() == 0) {
+            return false;
+        } else {
+            return firestationRepository.removeAll(firestationToRemove);
         }
-        throw new ObjectNotFoundException(
-                "No firestation with name: " + address + " found.",
-                firestationToRemove);
     }
 
 }
