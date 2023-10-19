@@ -38,6 +38,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+        	<groupId>junit</groupId>
+        	<artifactId>junit</artifactId>
+        	<version>4.13.2</version> <!-- You can specify the version you want to use -->
+        	<scope>test</scope>
+    	</dependency>
 	</dependencies>
 
 	<build>
