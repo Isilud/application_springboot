@@ -10,7 +10,7 @@ import lombok.Data;
 public class MedicalRecord {
     String firstName;
     String lastName;
-    String birthDate;
+    String birthdate;
     Set<String> medication;
     Set<String> allergies;
 }

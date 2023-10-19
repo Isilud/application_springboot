@@ -1,11 +1,16 @@
 package com.safetynet.service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import org.hibernate.ObjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.safetynet.exception.MedicalRecordAlreadyExistException;
+import com.safetynet.exception.MedicalRecordBadRequestException;
+import com.safetynet.exception.MedicalRecordNotFoundException;
 import com.safetynet.model.MedicalRecord;
 import com.safetynet.repository.MedicalRecordRepository;
 
@@ -14,41 +19,54 @@ public class MedicalRecordService {
 
     private final MedicalRecordRepository medicalRecordRepository;
 
+    Logger logger = LoggerFactory.getLogger(MedicalRecordService.class);
+
     public MedicalRecordService(MedicalRecordRepository medicalRecordRepository) {
         this.medicalRecordRepository = medicalRecordRepository;
     }
 
     public Set<MedicalRecord> getAllMedicalRecords() {
-        return medicalRecordRepository.getAll();
+        Set<MedicalRecord> medicalRecords = medicalRecordRepository.getAll();
+        logger.info("Medical records found : " + medicalRecords.toString());
+        return medicalRecords;
     }
 
-    public void saveMedicalRecord(MedicalRecord medicalRecord) {
+    public void saveMedicalRecord(MedicalRecord medicalRecord) throws MedicalRecordAlreadyExistException {
+        Optional<MedicalRecord> existingMedicalRecordForPatient = medicalRecordRepository
+                .findByPatientName(medicalRecord.getFirstName(), medicalRecord.getLastName());
+        if (existingMedicalRecordForPatient.isPresent()) {
+            throw new MedicalRecordAlreadyExistException(medicalRecord);
+        }
         medicalRecordRepository.save(medicalRecord);
+        logger.info("Medical record saved : " + medicalRecord.toString());
     }
 
-    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) {
+    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) throws MedicalRecordNotFoundException {
         Optional<MedicalRecord> medicalRecordToUpdate = medicalRecordRepository
                 .findByPatientName(medicalRecord.getFirstName(), medicalRecord.getLastName());
         if (medicalRecordToUpdate.isPresent()) {
+            logger.info("Medical record found : " + medicalRecordToUpdate.get().toString());
             MedicalRecord _medicalRecordToUpdate = medicalRecordToUpdate.get();
-            _medicalRecordToUpdate.setBirthDate(medicalRecord.getBirthDate());
-            _medicalRecordToUpdate.setAllergies(medicalRecord.getAllergies());
-            _medicalRecordToUpdate.setMedication(medicalRecord.getMedication());
+            medicalRecordRepository.remove(_medicalRecordToUpdate);
+            medicalRecordRepository.save(medicalRecord);
+            logger.info("Medical record updated : " + medicalRecord.toString());
             return _medicalRecordToUpdate;
         }
-        throw new ObjectNotFoundException(
-                "No medical record with name: " + medicalRecord.getFirstName() + " " + medicalRecord.getLastName()
-                        + " found.",
-                medicalRecordToUpdate);
+        throw new MedicalRecordNotFoundException(medicalRecord);
     }
 
-    public void removeMedicalRecord(String firstName, String lastName) {
-        Optional<MedicalRecord> medicalRecordToRemove = medicalRecordRepository.findByPatientName(firstName, lastName);
-        if (medicalRecordToRemove.isPresent()) {
-            medicalRecordRepository.remove(medicalRecordToRemove.get());
+    public void removeMedicalRecord(MedicalRecord medicalRecord)
+            throws MedicalRecordNotFoundException, MedicalRecordBadRequestException {
+        if (Objects.nonNull(medicalRecord.getFirstName()) && Objects.nonNull(medicalRecord.getLastName())) {
+            Optional<MedicalRecord> medicalRecordToRemove = medicalRecordRepository
+                    .findByPatientName(medicalRecord.getFirstName(), medicalRecord.getLastName());
+            if (medicalRecordToRemove.isPresent()) {
+                logger.info("Medical record found : " + medicalRecordToRemove.get().toString());
+                medicalRecordRepository.remove(medicalRecordToRemove.get());
+                return;
+            }
+            throw new MedicalRecordNotFoundException(medicalRecord);
         }
-        throw new ObjectNotFoundException(
-                "No medical record with name: " + firstName + " " + lastName + " found.",
-                medicalRecordToRemove);
+        throw new MedicalRecordBadRequestException();
     }
 }

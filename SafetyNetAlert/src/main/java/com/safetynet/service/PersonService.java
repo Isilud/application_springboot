@@ -1,11 +1,16 @@
 package com.safetynet.service;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.safetynet.exception.PersonAlreadyExistException;
+import com.safetynet.exception.PersonBadRequestException;
+import com.safetynet.exception.PersonNotFoundException;
 import com.safetynet.model.Person;
 import com.safetynet.repository.PersonRepository;
 
@@ -14,44 +19,52 @@ public class PersonService {
 
     private final PersonRepository personRepository;
 
+    Logger logger = LoggerFactory.getLogger(PersonService.class);
+
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
-    public void savePerson(Person person) {
+    public void savePerson(Person person) throws PersonAlreadyExistException {
         Optional<Person> existingPerson = personRepository
                 .findByName(person.getFirstName(), person.getLastName());
         if (existingPerson.isPresent()) {
-            String errorMessage = ("Already a person called " + person.getFirstName() + " " + person.getLastName());
-            System.out.println(errorMessage);
-            throw new DataIntegrityViolationException(errorMessage);
+            throw new PersonAlreadyExistException(person);
         }
         personRepository.save(person);
-        System.out.println("Person saved");
+        logger.info("Person saved : " + person.toString());
     }
 
-    public Person updatePerson(Person person) {
+    public Set<Person> getAllPersons() {
+        Set<Person> persons = personRepository.getAll();
+        logger.info("Persons found : " + persons.toString());
+        return persons;
+    }
+
+    public Person updatePerson(Person person) throws PersonNotFoundException {
         Optional<Person> personToUpdate = personRepository.findByName(person.getFirstName(), person.getLastName());
         if (personToUpdate.isPresent()) {
+            logger.info("Person found : " + personToUpdate.get().toString());
             Person _personToUpdate = personToUpdate.get();
             personRepository.remove(_personToUpdate);
             personRepository.save(person);
-            System.out.println("Person updated");
+            logger.info("Person updated : " + person.toString());
             return _personToUpdate;
         }
-        String errorMessage = "No person with name " + person.getFirstName() + " " + person.getLastName() + " found";
-        System.out.println(errorMessage);
-        throw new ResourceNotFoundException(errorMessage);
+        throw new PersonNotFoundException(person);
     }
 
-    public void removePerson(String firstName, String lastName) {
-        Optional<Person> personToRemove = personRepository.findByName(firstName, lastName);
-        if (personToRemove.isPresent()) {
-            personRepository.remove(personToRemove.get());
+    public void removePerson(Person person) throws PersonNotFoundException, PersonBadRequestException {
+        if (Objects.nonNull(person.getFirstName()) && Objects.nonNull(person.getLastName())) {
+            Optional<Person> personToRemove = personRepository.findByName(person.getFirstName(), person.getLastName());
+            if (personToRemove.isPresent()) {
+                logger.info("Person found : " + personToRemove.get().toString());
+                personRepository.remove(personToRemove.get());
+                return;
+            }
+            throw new PersonNotFoundException(person);
         }
-        String errorMessage = "No person with name: " + firstName + " " + lastName + " found";
-        System.out.println(errorMessage);
-        throw new ResourceNotFoundException(errorMessage);
+        throw new PersonBadRequestException();
     }
 
 }

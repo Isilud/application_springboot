@@ -4,12 +4,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import org.hibernate.ObjectNotFoundException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.safetynet.model.BadRequestException;
+import com.safetynet.exception.FirestationAlreadyExistException;
+import com.safetynet.exception.FirestationBadRequestException;
+import com.safetynet.exception.FirestationStationNotFoundException;
+import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.model.Firestation;
 import com.safetynet.repository.FirestationRepository;
 
@@ -18,64 +20,60 @@ public class FirestationService {
 
     private final FirestationRepository firestationRepository;
 
+    Logger logger = LoggerFactory.getLogger(FirestationService.class);
+
     public FirestationService(FirestationRepository firestationRepository) {
         this.firestationRepository = firestationRepository;
     }
 
-    public void saveFirestation(Firestation firestation) {
+    public void saveFirestation(Firestation firestation) throws FirestationAlreadyExistException {
         Optional<Firestation> existingFirestationAtAddress = firestationRepository
                 .findByAddress(firestation.getAddress());
         if (existingFirestationAtAddress.isPresent()) {
-            String errorMessage = ("Already a firestation with address " + firestation.getAddress());
-            System.out.println(errorMessage);
-            throw new DataIntegrityViolationException(errorMessage);
+            throw new FirestationAlreadyExistException(firestation);
         }
         firestationRepository.save(firestation);
-        System.out.println("Firestation saved");
+        logger.info("Firestation saved : " + firestation.toString());
     }
 
     public Set<Firestation> getAllFirestations() {
-        return firestationRepository.getAll();
+        Set<Firestation> firestations = firestationRepository.getAll();
+        logger.info("Firestations found : " + firestations.toString());
+        return firestations;
     }
 
-    public Firestation updateFirestation(Firestation firestation) {
+    public Firestation updateFirestation(Firestation firestation) throws FirestationAddressNotFoundException {
         Optional<Firestation> firestationToUpdate = firestationRepository.findByAddress(firestation.getAddress());
         if (firestationToUpdate.isPresent()) {
+            logger.info("Firestation found : " + firestationToUpdate.get().toString());
             Firestation _firestationToUpdate = firestationToUpdate.get();
             firestationRepository.remove(_firestationToUpdate);
             firestationRepository.save(firestation);
-            System.out.println("Firestation updated");
+            logger.info("Firestation updated with : " + firestation.toString());
             return firestation;
         }
-        throw new ObjectNotFoundException(
-                "No firestation with address: " + firestation.getAddress() + " found.",
-                firestationToUpdate);
+        throw new FirestationAddressNotFoundException(firestation);
     }
 
-    public void removeFirestation(Firestation firestation) {
+    public void removeFirestation(Firestation firestation) throws FirestationAddressNotFoundException,
+            FirestationBadRequestException, FirestationStationNotFoundException {
         if (Objects.nonNull(firestation.getAddress())) {
-            System.out.println("Searching firestation with address : " + firestation.getAddress());
             Optional<Firestation> firestationToRemove = firestationRepository.findByAddress(firestation.getAddress());
             if (firestationToRemove.isPresent()) {
+                logger.info("Firestation found : " + firestationToRemove.get().toString());
                 firestationRepository.remove(firestationToRemove.get());
                 return;
             }
-            String errorMessage = "No firestation with address: " + firestation.getAddress() + " found";
-            System.out.println(errorMessage);
-            throw new ResourceNotFoundException(errorMessage);
+            throw new FirestationAddressNotFoundException(firestation);
         } else if (Objects.nonNull(firestation.getStation())) {
-            System.out.println("Searching all firestation with station : " + firestation.getStation());
             Set<Firestation> firestationToRemove = firestationRepository.findAllByStation(firestation.getStation());
             if (firestationToRemove.size() > 0) {
+                logger.info("Firestations found : " + firestationToRemove.toString());
                 firestationRepository.removeAll(firestationToRemove);
                 return;
             }
-            String errorMessage = "No firestation with station: " + firestation.getStation() + " found";
-            System.out.println(errorMessage);
-            throw new ResourceNotFoundException(errorMessage);
+            throw new FirestationStationNotFoundException(firestation);
         }
-        String errorMessage = "Ensure the body contain either an address or a station.";
-        System.out.println(errorMessage);
-        throw new BadRequestException(errorMessage);
+        throw new FirestationBadRequestException();
     }
 }

@@ -78,17 +78,12 @@ public class JsonDataService implements DataService {
             MedicalRecord medicalRecord = MedicalRecord.builder()
                     .firstName(medicalRecordNode.path("firstName").asText())
                     .lastName(medicalRecordNode.path("lastName").asText())
-                    .birthDate(medicalRecordNode.path("birthDate").asText())
+                    .birthdate(medicalRecordNode.path("birthdate").asText())
                     .medication(medications)
                     .allergies(allergies)
                     .build();
             medicalRecordRepository.save(medicalRecord);
         }
         ;
-
-        System.out.println(personRepository.getAll());
-        System.out.println(firestationRepository.getAll());
-        System.out.println(medicalRecordRepository.getAll());
     }
-
 }
