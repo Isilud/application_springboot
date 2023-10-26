@@ -111,4 +111,11 @@ public class PersonServiceTest {
                 () -> personService.removePerson(personToRemove));
     }
 
+    @Test
+    public void testDeletePersonBadRequestNoLastName() {
+        Person personToRemove = Person.builder().firstName(defaultPerson().getFirstName()).build();
+        assertThrows(PersonBadRequestException.class,
+                () -> personService.removePerson(personToRemove));
+    }
+
 }

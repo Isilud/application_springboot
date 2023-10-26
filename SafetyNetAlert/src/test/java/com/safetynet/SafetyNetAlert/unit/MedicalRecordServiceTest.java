@@ -112,4 +112,12 @@ public class MedicalRecordServiceTest {
                 () -> medicalRecordService.removeMedicalRecord(medicalRecordToRemove));
     }
 
+    @Test
+    public void testDeleteMedicalRecordBadRequestNoLastName() {
+        MedicalRecord medicalRecordToRemove = MedicalRecord.builder().firstName(defaultMedicalRecord().getFirstName())
+                .build();
+        assertThrows(MedicalRecordBadRequestException.class,
+                () -> medicalRecordService.removeMedicalRecord(medicalRecordToRemove));
+    }
+
 }
