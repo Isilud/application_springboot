@@ -1,6 +1,5 @@
 package com.safetynet.controller;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;

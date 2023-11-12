@@ -29,7 +29,7 @@ public class FirestationControllerTest {
         public String defaultObject() throws JsonProcessingException {
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("address", "anAddress");
-                requestMap.put("station", "1");
+                requestMap.put("station", "aStationNumber");
                 return new ObjectMapper().writeValueAsString(requestMap);
         }
 
@@ -111,7 +111,7 @@ public class FirestationControllerTest {
                                                 .content(defaultObject())
                                                 .contentType(MediaType.APPLICATION_JSON));
                 Map<String, String> updatedMap = new HashMap<>();
-                updatedMap.put("station", "1");
+                updatedMap.put("station", "aStationNumber");
                 String updatedRequest = new ObjectMapper().writeValueAsString(updatedMap);
                 mockMvc.perform(
                                 MockMvcRequestBuilders.delete("/firestation")
