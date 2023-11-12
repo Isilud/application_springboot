@@ -1,5 +1,6 @@
 package com.safetynet.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -43,6 +44,17 @@ public class UrlController {
         logger.info("Fetching children with address : " + address);
         Set<ChildrenWithAddressDTO> response = urlService.getChildrenAtAddress(address);
         logger.info("Childrens found : " + response);
+        return response;
+    }
+
+    @GetMapping(path = "/phoneAlert", params = "firestation")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getPhoneWithStationCoverage(
+            @RequestParam(name = "firestation", required = true) String station)
+            throws FirestationStationNotFoundException {
+        logger.info("Fetching phone covered by station : " + station);
+        List<String> response = urlService.getPhoneUnderStation(station);
+        logger.info("Phone numbers found : " + response);
         return response;
     }
 }

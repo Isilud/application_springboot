@@ -24,4 +24,22 @@ public class UrlControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    public void getChildrenAtAddress() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/childAlert")
+                        .param("address", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void getPhoneWithStationCoverage() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/phoneAlert")
+                        .param("firestation", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }
