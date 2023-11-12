@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.safetynet.dto.ChildrenWithAddressDTO;
+import com.safetynet.dto.FireInformationDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
 import com.safetynet.exception.FirestationStationNotFoundException;
 import com.safetynet.exception.MedicalRecordNotFoundException;
@@ -55,6 +56,17 @@ public class UrlController {
         logger.info("Fetching phone covered by station : " + station);
         List<String> response = urlService.getPhoneUnderStation(station);
         logger.info("Phone numbers found : " + response);
+        return response;
+    }
+
+    @GetMapping(path = "/fire", params = "address")
+    @ResponseStatus(HttpStatus.OK)
+    public FireInformationDTO getFireInformation(
+            @RequestParam(name = "address", required = true) String address)
+            throws FirestationStationNotFoundException {
+        logger.info("Fetching information for fire at address : " + address);
+        FireInformationDTO response = urlService.getFireInformation(address);
+        logger.info("Retrieved information : " + response);
         return response;
     }
 }
