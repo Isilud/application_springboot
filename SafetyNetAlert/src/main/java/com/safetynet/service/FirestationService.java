@@ -81,4 +81,13 @@ public class FirestationService {
         logger.info("Firestations found : " + firestations.toString());
         return firestations;
     }
+
+    public Firestation getFirestationWithAddress(String address) throws FirestationAddressNotFoundException {
+        Optional<Firestation> firestation = firestationRepository.findByAddress(address);
+        if (firestation.isPresent()) {
+            logger.info("Firestation found : " + firestation.get().toString());
+            return firestation.get();
+        }
+        throw new FirestationAddressNotFoundException(Firestation.builder().address(address).build());
+    }
 }

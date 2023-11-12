@@ -137,12 +137,21 @@ public class FirestationServiceTest {
     }
 
     @Test
-    public void testGetFirestationWithAddress() {
+    public void testGetFirestationWithAddress() throws FirestationAddressNotFoundException {
         String address = defaultFirestation().getAddress();
         when(firestationRepository.findByAddress(address))
                 .thenReturn(Optional.of(defaultFirestation()));
         Firestation registeredFirestation = firestationService.getFirestationWithAddress(address);
         assertEquals(defaultFirestation(), registeredFirestation);
+    }
+
+    @Test
+    public void testGetFirestationWithAddressNotFound() throws FirestationAddressNotFoundException {
+        String address = defaultFirestation().getAddress();
+        when(firestationRepository.findByAddress(address))
+                .thenReturn(Optional.empty());
+        assertThrows(FirestationAddressNotFoundException.class,
+                () -> firestationService.getFirestationWithAddress(address));
     }
 
 }

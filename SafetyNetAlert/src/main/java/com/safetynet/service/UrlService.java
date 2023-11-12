@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.safetynet.dto.ChildrenWithAddressDTO;
+import com.safetynet.dto.FireInformationDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
 import com.safetynet.exception.FirestationStationNotFoundException;
 import com.safetynet.exception.MedicalRecordNotFoundException;
@@ -103,6 +104,10 @@ public class UrlService {
             }
         }
         return phoneList;
+    }
+
+    public FireInformationDTO getFireInformation(String address) {
+        return null;
     }
 
 }

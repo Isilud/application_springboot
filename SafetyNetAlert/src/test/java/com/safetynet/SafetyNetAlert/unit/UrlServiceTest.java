@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.safetynet.dto.ChildrenWithAddressDTO;
 import com.safetynet.dto.FireInformationDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
+import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.exception.FirestationStationNotFoundException;
 import com.safetynet.exception.MedicalRecordNotFoundException;
 import com.safetynet.model.Firestation;
@@ -170,7 +171,7 @@ public class UrlServiceTest {
         }
 
         @Test
-        public void getFireInformation() {
+        public void getFireInformation() throws FirestationAddressNotFoundException {
                 String address = "validAddress";
                 when(personService.getAllPersonsWithAddress(address))
                                 .thenReturn(defaultPersonsWithAddress(address));
