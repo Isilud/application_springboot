@@ -1,6 +1,5 @@
 package com.safetynet.service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -69,9 +68,9 @@ public class PersonService {
         throw new PersonBadRequestException();
     }
 
-    public List<Person> getAllPersonsWithAddress(Object address) {
+    public Set<Person> getAllPersonsWithAddress(String address) {
         Set<Person> persons = getAllPersons();
-        return persons.stream().filter((Person p) -> p.getAddress().equals(address)).collect(Collectors.toList());
+        return persons.stream().filter((Person p) -> p.getAddress().equals(address)).collect(Collectors.toSet());
     }
 
 }

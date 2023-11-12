@@ -1,6 +1,6 @@
 package com.safetynet.dto;
 
-import java.util.List;
+import java.util.Set;
 
 import com.safetynet.model.Person;
 
@@ -13,5 +13,5 @@ public class ChildrenWithAddressDTO {
     String firstName;
     String lastName;
     int age;
-    List<Person> family;
+    Set<Person> family;
 }

@@ -1,6 +1,6 @@
 package com.safetynet.controller;
 
-import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +38,10 @@ public class UrlController {
 
     @GetMapping(path = "/childAlert", params = "address")
     @ResponseStatus(HttpStatus.OK)
-    public List<ChildrenWithAddressDTO> getChildrenAtAddress(
+    public Set<ChildrenWithAddressDTO> getChildrenAtAddress(
             @RequestParam(name = "address", required = true) String address) throws MedicalRecordNotFoundException {
         logger.info("Fetching children with address : " + address);
-        List<ChildrenWithAddressDTO> response = urlService.getChildrenAtAddress(address);
+        Set<ChildrenWithAddressDTO> response = urlService.getChildrenAtAddress(address);
         logger.info("Childrens found : " + response);
         return response;
     }

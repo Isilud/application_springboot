@@ -118,4 +118,12 @@ public class PersonServiceTest {
                 () -> personService.removePerson(personToRemove));
     }
 
+    @Test
+    public void getAllPersonsWithAddress() {
+        Set<Person> expectedList = new HashSet<Person>();
+        expectedList.add(defaultPerson());
+        when(personRepository.getAll()).thenReturn(expectedList);
+        Set<Person> response = personService.getAllPersonsWithAddress(defaultPerson().getAddress());
+        assertEquals(expectedList, response);
+    }
 }

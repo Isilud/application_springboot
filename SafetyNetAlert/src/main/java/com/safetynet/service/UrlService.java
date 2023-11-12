@@ -67,10 +67,10 @@ public class UrlService {
                 .build();
     }
 
-    public List<ChildrenWithAddressDTO> getChildrenAtAddress(String address) throws MedicalRecordNotFoundException {
+    public Set<ChildrenWithAddressDTO> getChildrenAtAddress(String address) throws MedicalRecordNotFoundException {
         AgeCalculator calculator = new AgeCalculator();
-        List<Person> persons = personService.getAllPersonsWithAddress(address);
-        List<ChildrenWithAddressDTO> childrenList = new ArrayList<>();
+        Set<Person> persons = personService.getAllPersonsWithAddress(address);
+        Set<ChildrenWithAddressDTO> childrenList = new HashSet<ChildrenWithAddressDTO>();
         for (Person person : persons) {
             String birthdate = medicalRecordService.getRecord(person.getFirstName(), person.getLastName())
                     .getBirthdate();
@@ -81,10 +81,9 @@ public class UrlService {
                         .lastName(person.getLastName())
                         .age(age)
                         .family(persons.stream()
-                                .filter((Person f) -> f.getLastName().equals(person.getLastName())
-                                        && !f.getFirstName().equals(person.getFirstName())
-                                        && f.getAddress().equals(person.getAddress()))
-                                .collect(Collectors.toList()))
+                                .filter((Person f) -> !f.getLastName().equals(person.getLastName())
+                                        || !f.getFirstName().equals(person.getFirstName()))
+                                .collect(Collectors.toSet()))
                         .build());
             }
         }
