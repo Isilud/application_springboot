@@ -136,4 +136,13 @@ public class FirestationServiceTest {
                 () -> firestationService.removeFirestation(firestationToRemove));
     }
 
+    @Test
+    public void testGetFirestationWithAddress() {
+        String address = defaultFirestation().getAddress();
+        when(firestationRepository.findByAddress(address))
+                .thenReturn(Optional.of(defaultFirestation()));
+        Firestation registeredFirestation = firestationService.getFirestationWithAddress(address);
+        assertEquals(defaultFirestation(), registeredFirestation);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.safetynet.SafetyNetAlert.integration.controller;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,7 +31,7 @@ public class UrlControllerTest {
     public void getChildrenAtAddress() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/childAlert")
-                        .param("address", "1")
+                        .param("address", "anAddress")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -39,6 +41,15 @@ public class UrlControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/phoneAlert")
                         .param("firestation", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void getFireInformation() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/fire")
+                        .param("address", "anAddress")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }

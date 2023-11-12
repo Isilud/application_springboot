@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.safetynet.dto.ChildrenWithAddressDTO;
+import com.safetynet.dto.FireInformationDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
 import com.safetynet.exception.FirestationStationNotFoundException;
 import com.safetynet.exception.MedicalRecordNotFoundException;
@@ -72,9 +73,8 @@ public class UrlServiceTest {
                 return persons;
         }
 
-        public Set<Firestation> defaultFirestationsWithAddress(String address) {
-                Set<Firestation> firestation = new HashSet<>();
-                firestation.add(Firestation.builder()
+        public Firestation defaultFirestationWithAddress(String address) {
+                Firestation firestation = (Firestation.builder()
                                 .address(address)
                                 .station("1")
                                 .build());
@@ -111,8 +111,10 @@ public class UrlServiceTest {
                                 .adultCount(2)
                                 .childrenCount(1)
                                 .build();
+                Set<Firestation> firestationsSet = new HashSet<Firestation>();
+                firestationsSet.add(defaultFirestationWithAddress(address));
                 when(firestationService.findAllByStation("1"))
-                                .thenReturn(defaultFirestationsWithAddress(address));
+                                .thenReturn(firestationsSet);
                 when(personService.getAllPersons())
                                 .thenReturn(defaultPersonsWithAddress(address));
                 when(medicalRecordService.getRecord(anyString(), anyString()))
@@ -145,8 +147,10 @@ public class UrlServiceTest {
                 String address = "validAddress";
                 List<String> expectedResponse = defaultPersonsWithAddress("validAddress").stream()
                                 .map(p -> p.getPhone()).collect(Collectors.toList());
+                Set<Firestation> firestationsSet = new HashSet<Firestation>();
+                firestationsSet.add(defaultFirestationWithAddress(address));
                 when(firestationService.findAllByStation("1"))
-                                .thenReturn(defaultFirestationsWithAddress(address));
+                                .thenReturn(firestationsSet);
                 when(personService.getAllPersons())
                                 .thenReturn(defaultPersonsWithAddress(address));
                 List<String> response = urlService.getPhoneUnderStation("1");
@@ -155,11 +159,28 @@ public class UrlServiceTest {
 
         @Test
         public void getPhoneUnderStationEmpty() throws FirestationStationNotFoundException {
+                Set<Firestation> firestationsSet = new HashSet<Firestation>();
+                firestationsSet.add(defaultFirestationWithAddress("validAddress"));
                 when(firestationService.findAllByStation("1"))
-                                .thenReturn(defaultFirestationsWithAddress("validAddress"));
+                                .thenReturn(firestationsSet);
                 when(personService.getAllPersons())
                                 .thenReturn(defaultPersonsWithAddress("invalidAddress"));
                 List<String> response = urlService.getPhoneUnderStation("1");
                 assertEquals(0, response.size());
+        }
+
+        @Test
+        public void getFireInformation() {
+                String address = "validAddress";
+                when(personService.getAllPersonsWithAddress(address))
+                                .thenReturn(defaultPersonsWithAddress(address));
+                when(firestationService.getFirestationWithAddress(address))
+                                .thenReturn(defaultFirestationWithAddress(address));
+                FireInformationDTO expectedResponse = FireInformationDTO.builder()
+                                .persons(defaultPersonsWithAddress(address)).station("1").build();
+                FireInformationDTO response = urlService.getFireInformation(address);
+                assertEquals(expectedResponse.getStation(), response.getStation());
+                assertEquals(expectedResponse.getPersons(), response.getPersons());
+
         }
 }
