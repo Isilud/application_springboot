@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.safetynet.dto.ChildrenWithAddressDTO;
 import com.safetynet.dto.FireInformationDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
+import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.exception.FirestationStationNotFoundException;
 import com.safetynet.exception.MedicalRecordNotFoundException;
 import com.safetynet.service.UrlService;
@@ -63,7 +64,7 @@ public class UrlController {
     @ResponseStatus(HttpStatus.OK)
     public FireInformationDTO getFireInformation(
             @RequestParam(name = "address", required = true) String address)
-            throws FirestationStationNotFoundException {
+            throws FirestationAddressNotFoundException, MedicalRecordNotFoundException {
         logger.info("Fetching information for fire at address : " + address);
         FireInformationDTO response = urlService.getFireInformation(address);
         logger.info("Retrieved information : " + response);

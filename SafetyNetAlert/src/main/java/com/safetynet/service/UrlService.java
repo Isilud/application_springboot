@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.safetynet.dto.ChildrenWithAddressDTO;
 import com.safetynet.dto.FireInformationDTO;
+import com.safetynet.dto.PersonFireInformationDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
+import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.exception.FirestationStationNotFoundException;
 import com.safetynet.exception.MedicalRecordNotFoundException;
 import com.safetynet.model.Firestation;
+import com.safetynet.model.MedicalRecord;
 import com.safetynet.model.Person;
 import com.safetynet.utils.AgeCalculator;
 
@@ -106,8 +109,27 @@ public class UrlService {
         return phoneList;
     }
 
-    public FireInformationDTO getFireInformation(String address) {
-        return null;
+    public FireInformationDTO getFireInformation(String address)
+            throws FirestationAddressNotFoundException, MedicalRecordNotFoundException {
+        AgeCalculator calculator = new AgeCalculator();
+        Firestation firestation = firestationService.getFirestationWithAddress(address);
+        Set<Person> persons = personService.getAllPersonsWithAddress(address);
+        Set<PersonFireInformationDTO> personFireInfos = new HashSet<PersonFireInformationDTO>();
+        for (Person person : persons) {
+            MedicalRecord record = medicalRecordService.getRecord(person.getFirstName(), person.getLastName());
+            personFireInfos.add(PersonFireInformationDTO.builder()
+                    .age(calculator.calculateAge(record.getBirthdate()))
+                    .allergies(record.getAllergies())
+                    .medication(record.getMedication())
+                    .phone(person.getPhone())
+                    .name(person.getFirstName() + " " + person.getLastName())
+                    .build());
+        }
+        FireInformationDTO information = FireInformationDTO.builder()
+                .persons(personFireInfos)
+                .station(firestation.getStation())
+                .build();
+        return information;
     }
 
 }

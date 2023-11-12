@@ -1,7 +1,5 @@
 package com.safetynet.SafetyNetAlert.integration.controller;
 
-import static org.mockito.ArgumentMatchers.anyString;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -49,7 +47,7 @@ public class UrlControllerTest {
     public void getFireInformation() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/fire")
-                        .param("address", "anAddress")
+                        .param("address", "951 LoneTree Rd")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
