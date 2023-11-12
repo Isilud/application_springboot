@@ -66,14 +66,19 @@ public class FirestationService {
             }
             throw new FirestationAddressNotFoundException(firestation);
         } else if (Objects.nonNull(firestation.getStation())) {
-            Set<Firestation> firestationToRemove = firestationRepository.findAllByStation(firestation.getStation());
-            if (firestationToRemove.size() > 0) {
-                logger.info("Firestations found : " + firestationToRemove.toString());
-                firestationRepository.removeAll(firestationToRemove);
-                return;
-            }
-            throw new FirestationStationNotFoundException(firestation);
+            Set<Firestation> firestationToRemove = this.findAllByStation(firestation.getStation());
+            firestationRepository.removeAll(firestationToRemove);
+            return;
         }
         throw new FirestationBadRequestException();
+    }
+
+    public Set<Firestation> findAllByStation(String stationNumber) throws FirestationStationNotFoundException {
+        Set<Firestation> firestations = firestationRepository.findAllByStation(stationNumber);
+        if (firestations.size() == 0) {
+            throw new FirestationStationNotFoundException(Firestation.builder().station(stationNumber).build());
+        }
+        logger.info("Firestations found : " + firestations.toString());
+        return firestations;
     }
 }

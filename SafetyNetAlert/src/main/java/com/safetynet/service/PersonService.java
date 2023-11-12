@@ -1,8 +1,10 @@
 package com.safetynet.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,11 @@ public class PersonService {
             throw new PersonNotFoundException(person);
         }
         throw new PersonBadRequestException();
+    }
+
+    public List<Person> getAllPersonsWithAddress(Object address) {
+        Set<Person> persons = getAllPersons();
+        return persons.stream().filter((Person p) -> p.getAddress().equals(address)).collect(Collectors.toList());
     }
 
 }

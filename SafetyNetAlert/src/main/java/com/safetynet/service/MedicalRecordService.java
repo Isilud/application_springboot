@@ -58,15 +58,23 @@ public class MedicalRecordService {
     public void removeMedicalRecord(MedicalRecord medicalRecord)
             throws MedicalRecordNotFoundException, MedicalRecordBadRequestException {
         if (Objects.nonNull(medicalRecord.getFirstName()) && Objects.nonNull(medicalRecord.getLastName())) {
-            Optional<MedicalRecord> medicalRecordToRemove = medicalRecordRepository
-                    .findByPatientName(medicalRecord.getFirstName(), medicalRecord.getLastName());
-            if (medicalRecordToRemove.isPresent()) {
-                logger.info("Medical record found : " + medicalRecordToRemove.get().toString());
-                medicalRecordRepository.remove(medicalRecordToRemove.get());
-                return;
-            }
-            throw new MedicalRecordNotFoundException(medicalRecord);
+            MedicalRecord medicalRecordToRemove = this.getRecord(medicalRecord.getFirstName(),
+                    medicalRecord.getLastName());
+            medicalRecordRepository.remove(medicalRecordToRemove);
+            return;
         }
         throw new MedicalRecordBadRequestException();
+
+    }
+
+    public MedicalRecord getRecord(String firstName, String lastName) throws MedicalRecordNotFoundException {
+        Optional<MedicalRecord> medicalRecord = medicalRecordRepository
+                .findByPatientName(firstName, lastName);
+        if (medicalRecord.isEmpty()) {
+            throw new MedicalRecordNotFoundException(
+                    MedicalRecord.builder().firstName(firstName).lastName(lastName).build());
+        }
+        logger.info("Medical record found : " + medicalRecord.get().toString());
+        return medicalRecord.get();
     }
 }
