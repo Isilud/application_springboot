@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PersonsInCoverageSummaryDTO {
-    Set<PersonInCoverageDTO> personsInCoverage;
+    Set<PersonDTO> personsInCoverage;
     int adultCount;
     int childrenCount;
 
@@ -20,11 +20,11 @@ public class PersonsInCoverageSummaryDTO {
     }
 
     public static class PersonsInCoverageSummaryDTOBuilder {
-        Set<PersonInCoverageDTO> personsInCoverage;
+        Set<PersonDTO> personsInCoverage;
 
         public PersonsInCoverageSummaryDTOBuilder personsInCoverage(Set<Person> persons) {
             this.personsInCoverage = persons.stream()
-                    .map(p -> PersonInCoverageDTO.builder()
+                    .map(p -> PersonDTO.builder()
                             .firstName(p.getFirstName())
                             .lastName(p.getLastName())
                             .address(p.getAddress())
@@ -34,13 +34,4 @@ public class PersonsInCoverageSummaryDTO {
             return this;
         }
     }
-}
-
-@Data
-@Builder
-class PersonInCoverageDTO {
-    String firstName;
-    String lastName;
-    String address;
-    String phone;
 }

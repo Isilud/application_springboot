@@ -10,9 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.safetynet.dto.ChildrenWithAddressDTO;
 import com.safetynet.dto.FireInformationDTO;
-import com.safetynet.dto.PersonFireInformationDTO;
+import com.safetynet.dto.PersonDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
 import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.exception.FirestationStationNotFoundException;
@@ -71,16 +70,16 @@ public class UrlService {
                 .build();
     }
 
-    public Set<ChildrenWithAddressDTO> getChildrenAtAddress(String address) throws MedicalRecordNotFoundException {
+    public Set<PersonDTO> getChildrenAtAddress(String address) throws MedicalRecordNotFoundException {
         AgeCalculator calculator = new AgeCalculator();
         Set<Person> persons = personService.getAllPersonsWithAddress(address);
-        Set<ChildrenWithAddressDTO> childrenList = new HashSet<ChildrenWithAddressDTO>();
+        Set<PersonDTO> childrenList = new HashSet<PersonDTO>();
         for (Person person : persons) {
             String birthdate = medicalRecordService.getRecord(person.getFirstName(), person.getLastName())
                     .getBirthdate();
             int age = calculator.calculateAge(birthdate);
             if (age <= 18) {
-                childrenList.add(ChildrenWithAddressDTO.builder()
+                childrenList.add(PersonDTO.builder()
                         .firstName(person.getFirstName())
                         .lastName(person.getLastName())
                         .age(age)
@@ -114,15 +113,16 @@ public class UrlService {
         AgeCalculator calculator = new AgeCalculator();
         Firestation firestation = firestationService.getFirestationWithAddress(address);
         Set<Person> persons = personService.getAllPersonsWithAddress(address);
-        Set<PersonFireInformationDTO> personFireInfos = new HashSet<PersonFireInformationDTO>();
+        Set<PersonDTO> personFireInfos = new HashSet<PersonDTO>();
         for (Person person : persons) {
             MedicalRecord record = medicalRecordService.getRecord(person.getFirstName(), person.getLastName());
-            personFireInfos.add(PersonFireInformationDTO.builder()
+            personFireInfos.add(PersonDTO.builder()
                     .age(calculator.calculateAge(record.getBirthdate()))
                     .allergies(record.getAllergies())
                     .medication(record.getMedication())
                     .phone(person.getPhone())
-                    .name(person.getFirstName() + " " + person.getLastName())
+                    .firstName(person.getFirstName())
+                    .lastName(person.getLastName())
                     .build());
         }
         FireInformationDTO information = FireInformationDTO.builder()

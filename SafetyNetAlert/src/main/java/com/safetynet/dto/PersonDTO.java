@@ -9,9 +9,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ChildrenWithAddressDTO {
+public class PersonDTO {
     String firstName;
     String lastName;
+    String address;
+    String phone;
     int age;
     Set<Person> family;
+    Set<String> medication;
+    Set<String> allergies;
 }

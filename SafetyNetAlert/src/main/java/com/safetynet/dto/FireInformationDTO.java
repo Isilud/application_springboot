@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 @Builder
 public class FireInformationDTO {
-    Set<PersonFireInformationDTO> persons;
+    Set<PersonDTO> persons;
     String station;
 }

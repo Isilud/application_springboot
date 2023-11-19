@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.safetynet.dto.ChildrenWithAddressDTO;
 import com.safetynet.dto.FireInformationDTO;
+import com.safetynet.dto.PersonDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
 import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.exception.FirestationStationNotFoundException;
@@ -41,10 +41,10 @@ public class UrlController {
 
     @GetMapping(path = "/childAlert", params = "address")
     @ResponseStatus(HttpStatus.OK)
-    public Set<ChildrenWithAddressDTO> getChildrenAtAddress(
+    public Set<PersonDTO> getChildrenAtAddress(
             @RequestParam(name = "address", required = true) String address) throws MedicalRecordNotFoundException {
         logger.info("Fetching children with address : " + address);
-        Set<ChildrenWithAddressDTO> response = urlService.getChildrenAtAddress(address);
+        Set<PersonDTO> response = urlService.getChildrenAtAddress(address);
         logger.info("Childrens found : " + response);
         return response;
     }

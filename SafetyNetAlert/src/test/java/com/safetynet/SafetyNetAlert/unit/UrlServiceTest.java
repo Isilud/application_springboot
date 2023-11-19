@@ -2,14 +2,14 @@ package com.safetynet.SafetyNetAlert.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.safetynet.dto.ChildrenWithAddressDTO;
 import com.safetynet.dto.FireInformationDTO;
-import com.safetynet.dto.PersonFireInformationDTO;
+import com.safetynet.dto.PersonDTO;
 import com.safetynet.dto.PersonsInCoverageSummaryDTO;
 import com.safetynet.exception.FirestationAddressNotFoundException;
 import com.safetynet.exception.FirestationStationNotFoundException;
@@ -42,194 +41,196 @@ public class UrlServiceTest {
         @Mock
         private MedicalRecordService medicalRecordService;
 
+        // Service
         private UrlService urlService;
 
-        public Set<Person> defaultPersonsWithAddress(String address) {
-                Set<Person> persons = new HashSet<>();
-                persons.add(Person.builder()
-                                .firstName("John")
-                                .lastName("Doe")
-                                .address(address)
-                                .city("city")
-                                .zip("1234")
-                                .phone("0123456")
-                                .email("JohnDoe")
-                                .build());
-                persons.add(Person.builder()
-                                .firstName("Jane")
-                                .lastName("Dud")
-                                .address(address)
-                                .city("city")
-                                .zip("1234")
-                                .phone("7891011")
-                                .email("JaneDoe")
-                                .build());
-                persons.add(Person.builder()
-                                .firstName("Joseph")
-                                .lastName("Doe")
-                                .address(address)
-                                .city("city")
-                                .zip("1234")
-                                .phone("12131415")
-                                .email("None")
-                                .build());
-                return persons;
-        }
+        // Persons
+        Person JohnDoe;
+        Person JaneDoe;
+        Person JosephDoe;
 
-        public Firestation defaultFirestationWithAddress(String address) {
-                Firestation firestation = (Firestation.builder()
-                                .address(address)
-                                .station("1")
-                                .build());
-                return firestation;
-        }
+        // MedicalRecords
+        MedicalRecord JohnDoeRecord;
+        MedicalRecord JaneDoeRecord;
+        MedicalRecord JosephDoeRecord;
 
-        Set<String> defaultAllergies() {
-                Set<String> allergies = new HashSet<>();
-                allergies.add("lactose");
-                return allergies;
-        };
+        // Firestation
+        Firestation defaultFirestation;
 
-        Set<String> defaultMedication() {
-                Set<String> medication = new HashSet<>();
-                medication.add("doliprane");
-                return medication;
-        };
-
-        public MedicalRecord medicalRecordFor(String firstName) {
-                switch (firstName) {
-                        case "John":
-                                return MedicalRecord.builder()
-                                                .firstName("John")
-                                                .lastName("Doe")
-                                                .birthdate("01/02/1994")
-                                                .allergies(defaultAllergies())
-                                                .medication(defaultMedication())
-                                                .build();
-                        case "Jane":
-                                return MedicalRecord.builder()
-                                                .firstName("Jane")
-                                                .lastName("Dud")
-                                                .birthdate("01/02/1994")
-                                                .allergies(new HashSet<>())
-                                                .medication(new HashSet<>())
-                                                .build();
-                        case "Joseph":
-                                return MedicalRecord.builder()
-                                                .firstName("Joseph")
-                                                .lastName("Doe")
-                                                .birthdate("01/02/2017")
-                                                .allergies(new HashSet<>())
-                                                .medication(new HashSet<>())
-                                                .build();
-                }
-                return null;
-        }
-
-        public void setMedicalRecordMock() throws MedicalRecordNotFoundException {
-                when(medicalRecordService.getRecord( eq("John"), anyString())).thenReturn( medicalRecordFor("John") );
-                when(medicalRecordService.getRecord( eq("Jane"), anyString())).thenReturn( medicalRecordFor("Jane") );
-                when(medicalRecordService.getRecord( eq("Joseph"), anyString())).thenReturn( medicalRecordFor("Joseph") );
+        @BeforeEach
+        public void clearServices() {
+                urlService = new UrlService(medicalRecordService, personService, firestationService);
         }
 
         @BeforeEach
-        public void clear() {
-                urlService = new UrlService(medicalRecordService, personService, firestationService);
+        public void setPersons() {
+                JohnDoe = Person.builder().firstName("John").lastName("Doe").address("anAddress").city("city")
+                                .zip("1234").phone("0123456").email("JohnDoe").build();
+                JaneDoe = Person.builder().firstName("Jane").lastName("Doe").address("anAddress").city("city")
+                                .zip("1234").phone("7891011").email("JaneDoe").build();
+                JosephDoe = Person.builder().firstName("Joseph").lastName("Doe").address("anAddress").city("city")
+                                .zip("1234").phone("12131415").email("None").build();
+        }
+
+        @BeforeEach
+        public void setMedicalRecord() {
+                Set<String> medication = new HashSet<>();
+                medication.add("doliprane");
+                Set<String> allergies = new HashSet<>();
+                allergies.add("lactose");
+                JohnDoeRecord = MedicalRecord.builder()
+                                .firstName("John")
+                                .lastName("Doe")
+                                .birthdate("01/02/1994")
+                                .allergies(allergies)
+                                .medication(medication)
+                                .build();
+                JaneDoeRecord = MedicalRecord.builder()
+                                .firstName("Jane")
+                                .lastName("Doe")
+                                .birthdate("03/04/1995")
+                                .allergies(new HashSet<>())
+                                .medication(new HashSet<>())
+                                .build();
+                JosephDoeRecord = MedicalRecord.builder()
+                                .firstName("Joseph")
+                                .lastName("Doe")
+                                .birthdate("01/02/2017")
+                                .allergies(new HashSet<>())
+                                .medication(new HashSet<>())
+                                .build();
+        }
+
+        @BeforeEach
+        public void setFirestation() {
+                defaultFirestation = Firestation.builder()
+                                .address("anAddress")
+                                .station("1")
+                                .build();
         }
 
         @Test
         public void getPeopleWithStationCoverage()
                         throws FirestationStationNotFoundException, MedicalRecordNotFoundException {
-                setMedicalRecordMock();
-                String address = "validAddress";
-                PersonsInCoverageSummaryDTO expectedResponse = PersonsInCoverageSummaryDTO.builder()
-                                .personsInCoverage(defaultPersonsWithAddress(address))
-                                .adultCount(2)
-                                .childrenCount(1)
-                                .build();
-                Set<Firestation> firestationsSet = new HashSet<Firestation>();
-                firestationsSet.add(defaultFirestationWithAddress(address));
+                // Given
+                Set<Person> persons = new HashSet<Person>();
+                persons.add(JohnDoe);
+                JaneDoe.setAddress("anotherAddress");
+                persons.add(JaneDoe);
+                persons.add(JosephDoe);
+                Set<Firestation> firestations = new HashSet<Firestation>();
+                firestations.add(defaultFirestation);
                 when(firestationService.findAllByStation("1"))
-                                .thenReturn(firestationsSet);
+                                .thenReturn(firestations);
                 when(personService.getAllPersons())
-                                .thenReturn(defaultPersonsWithAddress(address));
+                                .thenReturn(persons);
+                when(medicalRecordService.getRecord("John", "Doe"))
+                                .thenReturn(JohnDoeRecord);
+                when(medicalRecordService.getRecord("Joseph", "Doe"))
+                                .thenReturn(JosephDoeRecord);
+                // When
                 PersonsInCoverageSummaryDTO response = urlService.getPeopleWithStationCoverage("1");
-                assertEquals(expectedResponse.getPersonsInCoverage(), response.getPersonsInCoverage());
-                assertEquals(expectedResponse.getAdultCount(), response.getAdultCount());
-                assertEquals(expectedResponse.getChildrenCount(), response.getChildrenCount());
+                // Then
+                assertFalse(response.getPersonsInCoverage().stream().anyMatch(p -> p.getFirstName().equals("Jane")));
+                assertEquals(2, response.getPersonsInCoverage().size());
+                assertEquals(1, response.getAdultCount());
+                assertEquals(1, response.getChildrenCount());
         }
 
         @Test
         public void getChildrenAtAddress() throws MedicalRecordNotFoundException {
-                setMedicalRecordMock();
-                String address = "validAddress";
-                when(personService.getAllPersonsWithAddress(address))
-                                .thenReturn(defaultPersonsWithAddress(address));
-                Set<ChildrenWithAddressDTO> response = urlService.getChildrenAtAddress(address);
+                // Given
+                Set<Person> persons = new HashSet<Person>();
+                persons.add(JohnDoe);
+                persons.add(JaneDoe);
+                persons.add(JosephDoe);
+                when(personService.getAllPersonsWithAddress("anAddress"))
+                                .thenReturn(persons);
+                when(medicalRecordService.getRecord("John", "Doe"))
+                                .thenReturn(JohnDoeRecord);
+                when(medicalRecordService.getRecord("Jane", "Doe"))
+                                .thenReturn(JaneDoeRecord);
+                when(medicalRecordService.getRecord("Joseph", "Doe"))
+                                .thenReturn(JosephDoeRecord);
+                // When
+                Set<PersonDTO> response = urlService.getChildrenAtAddress("anAddress");
+                // Then
                 assertEquals(1, response.size());
-                for (ChildrenWithAddressDTO child : response) {
-                        assertEquals(2, child.getFamily().size());
-                        List<String> firstNames = child.getFamily().stream().map(p -> p.getFirstName()).toList();
-                        assertFalse(firstNames.contains(child.getFirstName()));
-                }
-                ;
+                PersonDTO child = response.stream().findFirst().get(); // Existence ensured by previous assert
+                assertEquals(2, child.getFamily().size());
+                List<String> firstNames = child.getFamily().stream().map(p -> p.getFirstName()).toList();
+                assertFalse(firstNames.contains(child.getFirstName()));
         }
 
         @Test
         public void getPhoneUnderStation() throws FirestationStationNotFoundException {
-                String address = "validAddress";
-                List<String> expectedResponse = defaultPersonsWithAddress("validAddress").stream()
-                                .map(p -> p.getPhone()).collect(Collectors.toList());
-                Set<Firestation> firestationsSet = new HashSet<Firestation>();
-                firestationsSet.add(defaultFirestationWithAddress(address));
+                // Given
+                Set<Person> persons = new HashSet<Person>();
+                persons.add(JohnDoe);
+                persons.add(JaneDoe);
+                Set<Firestation> firestations = new HashSet<Firestation>();
+                firestations.add(defaultFirestation);
                 when(firestationService.findAllByStation("1"))
-                                .thenReturn(firestationsSet);
+                                .thenReturn(firestations);
                 when(personService.getAllPersons())
-                                .thenReturn(defaultPersonsWithAddress(address));
+                                .thenReturn(persons);
+                // When
                 List<String> response = urlService.getPhoneUnderStation("1");
-                assertEquals(expectedResponse, response);
+                // Then
+                List<String> phoneList = new ArrayList<String>();
+                phoneList.add("0123456");
+                phoneList.add("7891011");
+                assertEquals(phoneList, response);
         }
 
         @Test
         public void getPhoneUnderStationEmpty() throws FirestationStationNotFoundException {
-                Set<Firestation> firestationsSet = new HashSet<Firestation>();
-                firestationsSet.add(defaultFirestationWithAddress("validAddress"));
+                // Given
+                Set<Person> persons = new HashSet<Person>();
+                JohnDoe.setAddress("invalideAddress");
+                persons.add(JohnDoe);
+                Set<Firestation> firestations = new HashSet<Firestation>();
+                firestations.add(defaultFirestation);
                 when(firestationService.findAllByStation("1"))
-                                .thenReturn(firestationsSet);
+                                .thenReturn(firestations);
                 when(personService.getAllPersons())
-                                .thenReturn(defaultPersonsWithAddress("invalidAddress"));
+                                .thenReturn(persons);
+                // When
                 List<String> response = urlService.getPhoneUnderStation("1");
+                // Then
                 assertEquals(0, response.size());
         }
 
         @Test
         public void getFireInformation() throws FirestationAddressNotFoundException, MedicalRecordNotFoundException {
-                setMedicalRecordMock();
-                String address = "validAddress";
-                Set<PersonFireInformationDTO> personsFireInformation = new HashSet<PersonFireInformationDTO>();
-                defaultPersonsWithAddress(address).stream()
-                                .forEach(p -> {
-                                        MedicalRecord medicalRecord = medicalRecordFor(p.getFirstName());
-                                        personsFireInformation
-                                                        .add(PersonFireInformationDTO.builder()
-                                                                        .allergies(medicalRecord.getAllergies())
-                                                                        .medication(medicalRecord.getMedication())
-                                                                        .name(p.getFirstName() + " " + p.getLastName())
-                                                                        .phone(p.getPhone())
-                                                                        .build());
-                                });
-                FireInformationDTO expectedResponse = FireInformationDTO.builder().station("1")
-                                .persons(personsFireInformation).build();
-                when(personService.getAllPersonsWithAddress(address))
-                                .thenReturn(defaultPersonsWithAddress(address));
-                when(firestationService.getFirestationWithAddress(address))
-                                .thenReturn(defaultFirestationWithAddress(address));
-                FireInformationDTO response = urlService.getFireInformation(address);
-                assertEquals(expectedResponse.getPersons().size(), response.getPersons().size());
-                assertEquals(expectedResponse.getStation(), response.getStation());
-                PersonFireInformationDTO johnInformations = response.getPersons().stream()
-                                .filter(p -> p.getName().equals("John Doe")).findFirst().get();
-                assertEquals(medicalRecordFor("John").getAllergies(), johnInformations.getAllergies());
-                assertEquals(medicalRecordFor("John").getMedication(), johnInformations.getMedication());
+                // Given
+                Set<Person> persons = new HashSet<Person>();
+                persons.add(JohnDoe);
+                persons.add(JaneDoe);
+                persons.add(JosephDoe);
+                when(personService.getAllPersonsWithAddress("anAddress"))
+                                .thenReturn(persons);
+                when(firestationService.getFirestationWithAddress("anAddress"))
+                                .thenReturn(defaultFirestation);
+                when(medicalRecordService.getRecord("John", "Doe"))
+                                .thenReturn(JohnDoeRecord);
+                when(medicalRecordService.getRecord("Jane", "Doe"))
+                                .thenReturn(JaneDoeRecord);
+                when(medicalRecordService.getRecord("Joseph", "Doe"))
+                                .thenReturn(JosephDoeRecord);
+                // When
+                FireInformationDTO response = urlService.getFireInformation("anAddress");
+                // Then
+                assertEquals(3, response.getPersons().size());
+                assertEquals("1", response.getStation());
+                Optional<PersonDTO> johnInformations = response.getPersons().stream()
+                                .filter(p -> p.getFirstName().equals("John")).findFirst();
+                assertTrue(johnInformations.isPresent());
+                Set<String> medication = new HashSet<>();
+                medication.add("doliprane");
+                Set<String> allergies = new HashSet<>();
+                allergies.add("lactose");
+                assertEquals(allergies, johnInformations.get().getAllergies());
+                assertEquals(medication, johnInformations.get().getMedication());
         }
 }
