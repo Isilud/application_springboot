@@ -82,4 +82,17 @@ public class UrlController {
         logger.info("Retrieved information : " + response);
         return response;
     }
+
+    @GetMapping(path = "/personInfo", params = { "firstName", "lastName" })
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonDTO> getPersonInfo(
+            @RequestParam(name = "firstName", required = true) String firstName,
+            @RequestParam(name = "lastName", required = true) String lastName)
+            throws FirestationAddressNotFoundException, MedicalRecordNotFoundException,
+            FirestationStationNotFoundException {
+        logger.info("Fetching information for habitant named : " + firstName + " " + lastName);
+        List<PersonDTO> response = urlService.getPersonInfo(firstName, lastName);
+        logger.info("Retrieved information : " + response);
+        return response;
+    }
 }

@@ -73,4 +73,8 @@ public class PersonService {
         return persons.stream().filter((Person p) -> p.getAddress().equals(address)).collect(Collectors.toSet());
     }
 
+    public Set<Person> getPersonsByName(String lastName) {
+        return personRepository.findByLastName(lastName);
+    }
+
 }

@@ -155,4 +155,23 @@ public class UrlService {
         }
         return result;
     }
+
+    public List<PersonDTO> getPersonInfo(String firstName, String lastName) throws MedicalRecordNotFoundException {
+        AgeCalculator calculator = new AgeCalculator();
+        Set<Person> persons = personService.getPersonsByName(lastName);
+        List<PersonDTO> result = new ArrayList<PersonDTO>();
+        for (Person person : persons) {
+            MedicalRecord medicalRecord = medicalRecordService.getRecord(person.getFirstName(), person.getLastName());
+            result.add(PersonDTO.builder()
+                    .firstName(person.getFirstName())
+                    .lastName(person.getLastName())
+                    .age(calculator.calculateAge(medicalRecord.getBirthdate()))
+                    .allergies(medicalRecord.getAllergies())
+                    .medication(medicalRecord.getMedication())
+                    .address(person.getAddress())
+                    .email(person.getEmail())
+                    .build());
+        }
+        return result;
+    }
 }

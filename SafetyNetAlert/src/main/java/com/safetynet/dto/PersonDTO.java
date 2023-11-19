@@ -14,6 +14,7 @@ public class PersonDTO {
     String lastName;
     String address;
     String phone;
+    String email;
     int age;
     Set<Person> family;
     Set<String> medication;

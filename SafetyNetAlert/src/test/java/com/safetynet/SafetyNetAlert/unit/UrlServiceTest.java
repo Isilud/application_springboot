@@ -290,7 +290,7 @@ public class UrlServiceTest {
         }
 
         @Test
-        public void getPersonInfo() {
+        public void getPersonInfo() throws MedicalRecordNotFoundException {
                 // Given
                 Set<Person> persons = new HashSet<Person>();
                 persons.add(JohnDoe);
@@ -298,7 +298,26 @@ public class UrlServiceTest {
                 persons.add(JosephDoe);
                 when(personService.getPersonsByName("Doe"))
                                 .thenReturn(persons);
-
+                when(medicalRecordService.getRecord("John", "Doe"))
+                                .thenReturn(JohnDoeRecord);
+                when(medicalRecordService.getRecord("Jane", "Doe"))
+                                .thenReturn(JaneDoeRecord);
+                when(medicalRecordService.getRecord("Joseph", "Doe"))
+                                .thenReturn(JosephDoeRecord);
+                // When
+                List<PersonDTO> response = urlService.getPersonInfo("John", "Doe");
+                // Then
+                assertEquals(3, response.size());
+                Optional<PersonDTO> john = response.stream()
+                                .filter(p -> p.getFirstName().equals("John")).findFirst();
+                assertTrue(john.isPresent());
+                assertEquals("anAddress", john.get().getAddress());
+                Set<String> medication = new HashSet<>();
+                medication.add("doliprane");
+                assertEquals(medication, john.get().getMedication());
+                Set<String> allergies = new HashSet<>();
+                allergies.add("lactose");
+                assertEquals(allergies, john.get().getAllergies());
+                assertEquals("JohnDoe", john.get().getEmail());
         }
-
 }

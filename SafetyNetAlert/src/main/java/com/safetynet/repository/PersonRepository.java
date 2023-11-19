@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import com.safetynet.model.Person;
@@ -29,5 +30,10 @@ public class PersonRepository {
 
     public boolean remove(Person person) {
         return persons.remove(person);
+    }
+
+    public Set<Person> findByLastName(String lastName) {
+        return persons.stream().filter(p -> Objects.nonNull(lastName)
+                && Objects.equals(p.getLastName(), lastName)).collect(Collectors.toSet());
     }
 }
