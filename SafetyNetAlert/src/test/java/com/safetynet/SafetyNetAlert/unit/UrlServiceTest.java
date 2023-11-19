@@ -54,8 +54,9 @@ public class UrlServiceTest {
         MedicalRecord JaneDoeRecord;
         MedicalRecord JosephDoeRecord;
 
-        // Firestation
-        Firestation defaultFirestation;
+        // Firestations
+        Firestation firstFirestation;
+        Firestation secondFirestation;
 
         @BeforeEach
         public void clearServices() {
@@ -103,9 +104,13 @@ public class UrlServiceTest {
 
         @BeforeEach
         public void setFirestation() {
-                defaultFirestation = Firestation.builder()
+                firstFirestation = Firestation.builder()
                                 .address("anAddress")
                                 .station("1")
+                                .build();
+                secondFirestation = Firestation.builder()
+                                .address("anotherAddress")
+                                .station("2")
                                 .build();
         }
 
@@ -119,7 +124,7 @@ public class UrlServiceTest {
                 persons.add(JaneDoe);
                 persons.add(JosephDoe);
                 Set<Firestation> firestations = new HashSet<Firestation>();
-                firestations.add(defaultFirestation);
+                firestations.add(firstFirestation);
                 when(firestationService.findAllByStation("1"))
                                 .thenReturn(firestations);
                 when(personService.getAllPersons())
@@ -169,7 +174,7 @@ public class UrlServiceTest {
                 persons.add(JohnDoe);
                 persons.add(JaneDoe);
                 Set<Firestation> firestations = new HashSet<Firestation>();
-                firestations.add(defaultFirestation);
+                firestations.add(firstFirestation);
                 when(firestationService.findAllByStation("1"))
                                 .thenReturn(firestations);
                 when(personService.getAllPersons())
@@ -190,7 +195,7 @@ public class UrlServiceTest {
                 JohnDoe.setAddress("invalideAddress");
                 persons.add(JohnDoe);
                 Set<Firestation> firestations = new HashSet<Firestation>();
-                firestations.add(defaultFirestation);
+                firestations.add(firstFirestation);
                 when(firestationService.findAllByStation("1"))
                                 .thenReturn(firestations);
                 when(personService.getAllPersons())
@@ -211,7 +216,7 @@ public class UrlServiceTest {
                 when(personService.getAllPersonsWithAddress("anAddress"))
                                 .thenReturn(persons);
                 when(firestationService.getFirestationWithAddress("anAddress"))
-                                .thenReturn(defaultFirestation);
+                                .thenReturn(firstFirestation);
                 when(medicalRecordService.getRecord("John", "Doe"))
                                 .thenReturn(JohnDoeRecord);
                 when(medicalRecordService.getRecord("Jane", "Doe"))
@@ -233,4 +238,67 @@ public class UrlServiceTest {
                 assertEquals(allergies, johnInformations.get().getAllergies());
                 assertEquals(medication, johnInformations.get().getMedication());
         }
+
+        @Test
+        public void getPersonsInCoverage() throws FirestationStationNotFoundException, MedicalRecordNotFoundException {
+                // Given
+                Set<Person> personsAnAddress = new HashSet<Person>();
+                personsAnAddress.add(JohnDoe);
+                Set<Person> personsAnotherAddress = new HashSet<Person>();
+                JaneDoe.setAddress("anotherAddress");
+                personsAnotherAddress.add(JaneDoe);
+                when(personService.getAllPersonsWithAddress("anAddress"))
+                                .thenReturn(personsAnAddress);
+                when(personService.getAllPersonsWithAddress("anotherAddress"))
+                                .thenReturn(personsAnotherAddress);
+                Set<Firestation> firstStation = new HashSet<Firestation>();
+                firstStation.add(firstFirestation);
+                when(firestationService.findAllByStation("1"))
+                                .thenReturn(firstStation);
+                Set<Firestation> secondStation = new HashSet<Firestation>();
+                secondStation.add(secondFirestation);
+                when(firestationService.findAllByStation("2"))
+                                .thenReturn(secondStation);
+                when(medicalRecordService.getRecord("John", "Doe"))
+                                .thenReturn(JohnDoeRecord);
+                when(medicalRecordService.getRecord("Jane", "Doe"))
+                                .thenReturn(JaneDoeRecord);
+                // When
+                List<String> stationList = new ArrayList<String>();
+                stationList.add("1");
+                stationList.add("2");
+                List<PersonsInCoverageSummaryDTO> response = urlService.getFloodCoverage(stationList);
+                // Then
+                assertEquals(2, response.size());
+                Optional<PersonsInCoverageSummaryDTO> firstCoverage = response.stream()
+                                .filter(p -> p.getAddress().equals("anAddress")).findFirst();
+                assertTrue(firstCoverage.isPresent());
+                Optional<PersonsInCoverageSummaryDTO> secondCoverage = response.stream()
+                                .filter(p -> p.getAddress().equals("anotherAddress")).findFirst();
+                assertTrue(secondCoverage.isPresent());
+                assertEquals(1, firstCoverage.get().getPersonsInCoverage().size());
+                assertEquals(1, secondCoverage.get().getPersonsInCoverage().size());
+                PersonDTO johnInformation = firstCoverage.get().getPersonsInCoverage().stream().findFirst().get();
+                assertEquals("John", johnInformation.getFirstName());
+                Set<String> medication = new HashSet<>();
+                medication.add("doliprane");
+                Set<String> allergies = new HashSet<>();
+                allergies.add("lactose");
+                assertEquals(medication, johnInformation.getMedication());
+                assertEquals(allergies, johnInformation.getAllergies());
+                assertEquals("0123456", johnInformation.getPhone());
+        }
+
+        @Test
+        public void getPersonInfo() {
+                // Given
+                Set<Person> persons = new HashSet<Person>();
+                persons.add(JohnDoe);
+                persons.add(JaneDoe);
+                persons.add(JosephDoe);
+                when(personService.getPersonsByName("Doe"))
+                                .thenReturn(persons);
+
+        }
+
 }

@@ -12,6 +12,7 @@ import lombok.Data;
 @Builder
 public class PersonsInCoverageSummaryDTO {
     Set<PersonDTO> personsInCoverage;
+    String address;
     int adultCount;
     int childrenCount;
 

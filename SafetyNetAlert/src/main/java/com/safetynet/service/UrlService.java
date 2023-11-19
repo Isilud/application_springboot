@@ -132,4 +132,27 @@ public class UrlService {
         return information;
     }
 
+    public List<PersonsInCoverageSummaryDTO> getFloodCoverage(List<String> stationList)
+            throws FirestationStationNotFoundException, MedicalRecordNotFoundException {
+        AgeCalculator calculator = new AgeCalculator();
+        List<PersonsInCoverageSummaryDTO> result = new ArrayList<PersonsInCoverageSummaryDTO>();
+        for (String station : stationList) {
+            Set<Firestation> firestations = firestationService.findAllByStation(station);
+            for (Firestation firestation : firestations) {
+                Set<Person> coveredPeoples = personService.getAllPersonsWithAddress(firestation.getAddress());
+                PersonsInCoverageSummaryDTO personDTOSummary = PersonsInCoverageSummaryDTO.builder()
+                        .personsInCoverage(coveredPeoples)
+                        .address(firestation.getAddress()).build();
+                for (PersonDTO personDTO : personDTOSummary.getPersonsInCoverage()) {
+                    MedicalRecord personRecord = medicalRecordService.getRecord(personDTO.getFirstName(),
+                            personDTO.getLastName());
+                    personDTO.setAllergies(personRecord.getAllergies());
+                    personDTO.setMedication(personRecord.getMedication());
+                    personDTO.setAge(calculator.calculateAge(personRecord.getBirthdate()));
+                }
+                result.add(personDTOSummary);
+            }
+        }
+        return result;
+    }
 }

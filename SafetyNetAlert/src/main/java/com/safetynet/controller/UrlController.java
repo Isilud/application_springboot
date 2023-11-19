@@ -70,4 +70,16 @@ public class UrlController {
         logger.info("Retrieved information : " + response);
         return response;
     }
+
+    @GetMapping(path = "/flood", params = "stations")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonsInCoverageSummaryDTO> getFloodCoverage(
+            @RequestParam(name = "stations", required = true) List<String> stations)
+            throws FirestationAddressNotFoundException, MedicalRecordNotFoundException,
+            FirestationStationNotFoundException {
+        logger.info("Fetching information for flood covered by stations : " + stations);
+        List<PersonsInCoverageSummaryDTO> response = urlService.getFloodCoverage(stations);
+        logger.info("Retrieved information : " + response);
+        return response;
+    }
 }

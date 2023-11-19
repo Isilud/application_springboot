@@ -13,42 +13,51 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 public class UrlControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Test
-    public void getPeopleWithStationCoverage() throws Exception {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/firestation")
-                        .param("stationNumber", "1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        @Test
+        public void getPeopleWithStationCoverage() throws Exception {
+                mockMvc.perform(
+                                MockMvcRequestBuilders.get("/firestation")
+                                                .param("stationNumber", "1")
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 
-    @Test
-    public void getChildrenAtAddress() throws Exception {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/childAlert")
-                        .param("address", "anAddress")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        @Test
+        public void getChildrenAtAddress() throws Exception {
+                mockMvc.perform(
+                                MockMvcRequestBuilders.get("/childAlert")
+                                                .param("address", "anAddress")
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 
-    @Test
-    public void getPhoneWithStationCoverage() throws Exception {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/phoneAlert")
-                        .param("firestation", "1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        @Test
+        public void getPhoneWithStationCoverage() throws Exception {
+                mockMvc.perform(
+                                MockMvcRequestBuilders.get("/phoneAlert")
+                                                .param("firestation", "1")
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 
-    @Test
-    public void getFireInformation() throws Exception {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/fire")
-                        .param("address", "951 LoneTree Rd")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        @Test
+        public void getFireInformation() throws Exception {
+                mockMvc.perform(
+                                MockMvcRequestBuilders.get("/fire")
+                                                .param("address", "951 LoneTree Rd")
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
+
+        @Test
+        public void getFloodCoverage() throws Exception {
+                mockMvc.perform(
+                                MockMvcRequestBuilders.get("/flood")
+                                                .param("stations", "1,2")
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 }
