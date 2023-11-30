@@ -180,9 +180,9 @@ public class UrlServiceTest {
                 when(personService.getAllPersons())
                                 .thenReturn(persons);
                 // When
-                List<String> response = urlService.getPhoneUnderStation("1");
+                Set<String> response = urlService.getPhoneUnderStation("1");
                 // Then
-                List<String> phoneList = new ArrayList<String>();
+                Set<String> phoneList = new HashSet<>();
                 phoneList.add("0123456");
                 phoneList.add("7891011");
                 assertEquals(phoneList, response);
@@ -201,7 +201,7 @@ public class UrlServiceTest {
                 when(personService.getAllPersons())
                                 .thenReturn(persons);
                 // When
-                List<String> response = urlService.getPhoneUnderStation("1");
+                Set<String> response = urlService.getPhoneUnderStation("1");
                 // Then
                 assertEquals(0, response.size());
         }

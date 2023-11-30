@@ -93,8 +93,8 @@ public class UrlService {
         return childrenList;
     }
 
-    public List<String> getPhoneUnderStation(String stationNumber) throws FirestationStationNotFoundException {
-        List<String> phoneList = new ArrayList<>();
+    public Set<String> getPhoneUnderStation(String stationNumber) throws FirestationStationNotFoundException {
+        Set<String> phoneList = new HashSet<>();
         Set<Firestation> firestations = firestationService.findAllByStation(stationNumber);
         logger.info("Firestation found : " + firestations);
         Set<Person> persons = personService.getAllPersons();
@@ -173,5 +173,12 @@ public class UrlService {
                     .build());
         }
         return result;
+    }
+
+    public Set<String> personEmailFromCity(String city) {
+        Set<Person> persons = personService.getPersonsByCity(city);
+        return persons.stream().map((Person p) -> {
+            return p.getEmail();
+        }).collect(Collectors.toSet());
     }
 }

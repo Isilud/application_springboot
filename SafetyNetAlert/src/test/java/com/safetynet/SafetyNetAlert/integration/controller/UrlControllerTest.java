@@ -145,4 +145,13 @@ public class UrlControllerTest {
                                                 .contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(MockMvcResultMatchers.status().isOk());
         }
+
+        @Test
+        public void personEmailFromCity() throws Exception {
+                mockMvc.perform(
+                                MockMvcRequestBuilders.get("/communityEmail")
+                                                .param("city", "city")
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 }

@@ -77,4 +77,8 @@ public class PersonService {
         return personRepository.findByLastName(lastName);
     }
 
+    public Set<Person> getPersonsByCity(String city) {
+        return personRepository.findByCity(city);
+    }
+
 }

@@ -36,4 +36,9 @@ public class PersonRepository {
         return persons.stream().filter(p -> Objects.nonNull(lastName)
                 && Objects.equals(p.getLastName(), lastName)).collect(Collectors.toSet());
     }
+
+    public Set<Person> findByCity(String city) {
+        return persons.stream().filter(p -> Objects.nonNull(city)
+                && Objects.equals(p.getCity(), city)).collect(Collectors.toSet());
+    }
 }

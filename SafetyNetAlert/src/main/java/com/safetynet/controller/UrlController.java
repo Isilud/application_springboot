@@ -51,11 +51,11 @@ public class UrlController {
 
     @GetMapping(path = "/phoneAlert", params = "firestation")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getPhoneWithStationCoverage(
+    public Set<String> getPhoneWithStationCoverage(
             @RequestParam(name = "firestation", required = true) String station)
             throws FirestationStationNotFoundException {
         logger.info("Fetching phone covered by station : " + station);
-        List<String> response = urlService.getPhoneUnderStation(station);
+        Set<String> response = urlService.getPhoneUnderStation(station);
         logger.info("Phone numbers found : " + response);
         return response;
     }
@@ -92,6 +92,18 @@ public class UrlController {
             FirestationStationNotFoundException {
         logger.info("Fetching information for habitant named : " + firstName + " " + lastName);
         List<PersonDTO> response = urlService.getPersonInfo(firstName, lastName);
+        logger.info("Retrieved information : " + response);
+        return response;
+    }
+
+    @GetMapping(path = "/communityEmail", params = "city")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<String> personEmailFromCity(
+            @RequestParam(name = "city", required = true) String city)
+            throws FirestationAddressNotFoundException, MedicalRecordNotFoundException,
+            FirestationStationNotFoundException {
+        logger.info("Fetching email for habitant from : " + city);
+        Set<String> response = urlService.personEmailFromCity(city);
         logger.info("Retrieved information : " + response);
         return response;
     }
