@@ -27,7 +27,7 @@ public class MedicalRecordService {
 
     public Set<MedicalRecord> getAllMedicalRecords() {
         Set<MedicalRecord> medicalRecords = medicalRecordRepository.getAll();
-        logger.info("Medical records found : " + medicalRecords.toString());
+        logger.debug("Medical records found : " + medicalRecords.toString());
         return medicalRecords;
     }
 
@@ -38,18 +38,18 @@ public class MedicalRecordService {
             throw new MedicalRecordAlreadyExistException(medicalRecord);
         }
         medicalRecordRepository.save(medicalRecord);
-        logger.info("Medical record saved : " + medicalRecord.toString());
+        logger.debug("Medical record saved : " + medicalRecord.toString());
     }
 
     public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) throws MedicalRecordNotFoundException {
         Optional<MedicalRecord> medicalRecordToUpdate = medicalRecordRepository
                 .findByPatientName(medicalRecord.getFirstName(), medicalRecord.getLastName());
         if (medicalRecordToUpdate.isPresent()) {
-            logger.info("Medical record found : " + medicalRecordToUpdate.get().toString());
+            logger.debug("Medical record found : " + medicalRecordToUpdate.get().toString());
             MedicalRecord _medicalRecordToUpdate = medicalRecordToUpdate.get();
             medicalRecordRepository.remove(_medicalRecordToUpdate);
             medicalRecordRepository.save(medicalRecord);
-            logger.info("Medical record updated : " + medicalRecord.toString());
+            logger.debug("Medical record updated : " + medicalRecord.toString());
             return _medicalRecordToUpdate;
         }
         throw new MedicalRecordNotFoundException(medicalRecord);
@@ -74,7 +74,7 @@ public class MedicalRecordService {
             throw new MedicalRecordNotFoundException(
                     MedicalRecord.builder().firstName(firstName).lastName(lastName).build());
         }
-        logger.info("Medical record found : " + medicalRecord.get().toString());
+        logger.debug("Medical record found : " + medicalRecord.get().toString());
         return medicalRecord.get();
     }
 }

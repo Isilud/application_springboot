@@ -31,7 +31,7 @@ public class PersonController {
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
     public Person createPerson(@RequestBody Person person) throws PersonAlreadyExistException {
-        logger.info("Creating new person : " + person.toString());
+        logger.debug("Creating new person : " + person.toString());
         personService.savePerson(person);
         return person;
     }
@@ -39,14 +39,14 @@ public class PersonController {
     @GetMapping("/person")
     @ResponseStatus(HttpStatus.OK)
     public Set<Person> getAllPersons() {
-        logger.info("Fetching all persons");
+        logger.debug("Fetching all persons");
         return personService.getAllPersons();
     }
 
     @PutMapping("/person")
     @ResponseStatus(HttpStatus.OK)
     public Person updatePerson(@RequestBody Person person) throws PersonNotFoundException {
-        logger.info("Updating person : " + person.toString());
+        logger.debug("Updating person : " + person.toString());
         return personService.updatePerson(person);
     }
 
@@ -54,7 +54,7 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePerson(@RequestBody Person person)
             throws PersonNotFoundException, PersonBadRequestException {
-        logger.info("Deleting person : " + person.toString());
+        logger.debug("Deleting person : " + person.toString());
         personService.removePerson(person);
         return;
     }

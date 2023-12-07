@@ -33,23 +33,23 @@ public class PersonService {
             throw new PersonAlreadyExistException(person);
         }
         personRepository.save(person);
-        logger.info("Person saved : " + person.toString());
+        logger.debug("Person saved : " + person.toString());
     }
 
     public Set<Person> getAllPersons() {
         Set<Person> persons = personRepository.getAll();
-        logger.info("Persons found : " + persons.toString());
+        logger.debug("Persons found : " + persons.toString());
         return persons;
     }
 
     public Person updatePerson(Person person) throws PersonNotFoundException {
         Optional<Person> personToUpdate = personRepository.findByName(person.getFirstName(), person.getLastName());
         if (personToUpdate.isPresent()) {
-            logger.info("Person found : " + personToUpdate.get().toString());
+            logger.debug("Person found : " + personToUpdate.get().toString());
             Person _personToUpdate = personToUpdate.get();
             personRepository.remove(_personToUpdate);
             personRepository.save(person);
-            logger.info("Person updated : " + person.toString());
+            logger.debug("Person updated : " + person.toString());
             return _personToUpdate;
         }
         throw new PersonNotFoundException(person);
@@ -59,7 +59,7 @@ public class PersonService {
         if (Objects.nonNull(person.getFirstName()) && Objects.nonNull(person.getLastName())) {
             Optional<Person> personToRemove = personRepository.findByName(person.getFirstName(), person.getLastName());
             if (personToRemove.isPresent()) {
-                logger.info("Person found : " + personToRemove.get().toString());
+                logger.debug("Person found : " + personToRemove.get().toString());
                 personRepository.remove(personToRemove.get());
                 return;
             }

@@ -41,9 +41,9 @@ public class UrlService {
             throws FirestationStationNotFoundException, MedicalRecordNotFoundException {
         AgeCalculator calculator = new AgeCalculator();
         Set<Firestation> firestations = firestationService.findAllByStation(stationNumber);
-        logger.info("Firestation found : " + firestations);
+        logger.debug("Firestation found : " + firestations);
         Set<Person> persons = personService.getAllPersons();
-        logger.info("Persons covered : " + persons);
+        logger.debug("Persons covered : " + persons);
         Set<Person> coveredPeoples = new HashSet<>();
         int adultCount = 0;
         int childCount = 0;
@@ -62,7 +62,7 @@ public class UrlService {
                 }
             }
         }
-        logger.info("Adult/Children counted : " + adultCount + "/" + childCount);
+        logger.debug("Adult/Children counted : " + adultCount + "/" + childCount);
         return PersonsInCoverageSummaryDTO.builder()
                 .personsInCoverage(coveredPeoples)
                 .adultCount(adultCount)
@@ -96,9 +96,9 @@ public class UrlService {
     public Set<String> getPhoneUnderStation(String stationNumber) throws FirestationStationNotFoundException {
         Set<String> phoneList = new HashSet<>();
         Set<Firestation> firestations = firestationService.findAllByStation(stationNumber);
-        logger.info("Firestation found : " + firestations);
+        logger.debug("Firestation found : " + firestations);
         Set<Person> persons = personService.getAllPersons();
-        logger.info("Persons covered : " + persons);
+        logger.debug("Persons covered : " + persons);
         for (Person person : persons) {
             for (Firestation firestation : firestations) {
                 if ((person.getAddress().equals(firestation.getAddress())))

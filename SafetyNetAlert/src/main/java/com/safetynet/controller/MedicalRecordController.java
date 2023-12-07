@@ -32,7 +32,7 @@ public class MedicalRecordController {
     @ResponseStatus(HttpStatus.CREATED)
     public MedicalRecord createMedicalRecord(@RequestBody MedicalRecord medicalRecord)
             throws MedicalRecordAlreadyExistException {
-        logger.info("Creating new medical record : " + medicalRecord.toString());
+        logger.debug("Creating new medical record : " + medicalRecord.toString());
         medicalRecordService.saveMedicalRecord(medicalRecord);
         return medicalRecord;
     }
@@ -40,7 +40,7 @@ public class MedicalRecordController {
     @GetMapping("/medicalRecord")
     @ResponseStatus(HttpStatus.OK)
     public Set<MedicalRecord> getAllMedicalRecords() {
-        logger.info("Fetching all medical records");
+        logger.debug("Fetching all medical records");
         return medicalRecordService.getAllMedicalRecords();
     }
 
@@ -48,7 +48,7 @@ public class MedicalRecordController {
     @ResponseStatus(HttpStatus.OK)
     public MedicalRecord updateMedicalRecord(@RequestBody MedicalRecord medicalRecord)
             throws MedicalRecordNotFoundException {
-        logger.info("Updating medical record : " + medicalRecord.toString());
+        logger.debug("Updating medical record : " + medicalRecord.toString());
         return medicalRecordService.updateMedicalRecord(medicalRecord);
     }
 
@@ -56,7 +56,7 @@ public class MedicalRecordController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMedicalRecord(@RequestBody MedicalRecord medicalRecord)
             throws MedicalRecordNotFoundException, MedicalRecordBadRequestException {
-        logger.info("Deleting medical record : " + medicalRecord.toString());
+        logger.debug("Deleting medical record : " + medicalRecord.toString());
         medicalRecordService.removeMedicalRecord(medicalRecord);
         return;
     }

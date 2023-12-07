@@ -33,23 +33,23 @@ public class FirestationService {
             throw new FirestationAlreadyExistException(firestation);
         }
         firestationRepository.save(firestation);
-        logger.info("Firestation saved : " + firestation.toString());
+        logger.debug("Firestation saved : " + firestation.toString());
     }
 
     public Set<Firestation> getAllFirestations() {
         Set<Firestation> firestations = firestationRepository.getAll();
-        logger.info("Firestations found : " + firestations.toString());
+        logger.debug("Firestations found : " + firestations.toString());
         return firestations;
     }
 
     public Firestation updateFirestation(Firestation firestation) throws FirestationAddressNotFoundException {
         Optional<Firestation> firestationToUpdate = firestationRepository.findByAddress(firestation.getAddress());
         if (firestationToUpdate.isPresent()) {
-            logger.info("Firestation found : " + firestationToUpdate.get().toString());
+            logger.debug("Firestation found : " + firestationToUpdate.get().toString());
             Firestation _firestationToUpdate = firestationToUpdate.get();
             firestationRepository.remove(_firestationToUpdate);
             firestationRepository.save(firestation);
-            logger.info("Firestation updated with : " + firestation.toString());
+            logger.debug("Firestation updated with : " + firestation.toString());
             return firestation;
         }
         throw new FirestationAddressNotFoundException(firestation);
@@ -60,7 +60,7 @@ public class FirestationService {
         if (Objects.nonNull(firestation.getAddress())) {
             Optional<Firestation> firestationToRemove = firestationRepository.findByAddress(firestation.getAddress());
             if (firestationToRemove.isPresent()) {
-                logger.info("Firestation found : " + firestationToRemove.get().toString());
+                logger.debug("Firestation found : " + firestationToRemove.get().toString());
                 firestationRepository.remove(firestationToRemove.get());
                 return;
             }
@@ -78,14 +78,14 @@ public class FirestationService {
         if (firestations.size() == 0) {
             throw new FirestationStationNotFoundException(Firestation.builder().station(stationNumber).build());
         }
-        logger.info("Firestations found : " + firestations.toString());
+        logger.debug("Firestations found : " + firestations.toString());
         return firestations;
     }
 
     public Firestation getFirestationWithAddress(String address) throws FirestationAddressNotFoundException {
         Optional<Firestation> firestation = firestationRepository.findByAddress(address);
         if (firestation.isPresent()) {
-            logger.info("Firestation found : " + firestation.get().toString());
+            logger.debug("Firestation found : " + firestation.get().toString());
             return firestation.get();
         }
         throw new FirestationAddressNotFoundException(Firestation.builder().address(address).build());

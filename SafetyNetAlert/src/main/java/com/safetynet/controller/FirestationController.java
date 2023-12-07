@@ -32,7 +32,7 @@ public class FirestationController {
     @PostMapping("/firestation")
     @ResponseStatus(HttpStatus.CREATED)
     public Firestation createFirestation(@RequestBody Firestation firestation) throws FirestationAlreadyExistException {
-        logger.info("Creating new firestation : " + firestation.toString());
+        logger.debug("Creating new firestation : " + firestation.toString());
         firestationService.saveFirestation(firestation);
         return firestation;
     }
@@ -40,7 +40,7 @@ public class FirestationController {
     @GetMapping("/firestation")
     @ResponseStatus(HttpStatus.OK)
     public Set<Firestation> getAllFirestations() {
-        logger.info("Fetching all firestations");
+        logger.debug("Fetching all firestations");
         return firestationService.getAllFirestations();
     }
 
@@ -48,7 +48,7 @@ public class FirestationController {
     @ResponseStatus(HttpStatus.OK)
     public Firestation updateFirestation(@RequestBody Firestation firestation)
             throws FirestationAddressNotFoundException {
-        logger.info("Updating firestation : " + firestation.toString());
+        logger.debug("Updating firestation : " + firestation.toString());
         return firestationService.updateFirestation(firestation);
     }
 
@@ -56,7 +56,7 @@ public class FirestationController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFirestation(@RequestBody Firestation firestation) throws FirestationAddressNotFoundException,
             FirestationBadRequestException, FirestationStationNotFoundException {
-        logger.info("Deleting firestation : " + firestation.toString());
+        logger.debug("Deleting firestation : " + firestation.toString());
         firestationService.removeFirestation(firestation);
         return;
     }
